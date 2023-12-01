@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package port_resolver_service;
+
+option go_package = "github.com/fidesy-pay/port-resolver-service;port_resolver_service";
+
+service PortResolverService {
+  rpc GetPort(GetPortRequest) returns(GetPortResponse);
+  rpc UpdatePort(UpdatePortRequest) returns(UpdatePortResponse);
+}
+
+message GetPortRequest {
+  string service_name = 1;
+}
+
+message GetPortResponse {
+  int64 port = 1;
+}
+
+message UpdatePortRequest {
+  string service_name = 1;
+  int64 port = 2;
+}
+
+message UpdatePortResponse {}
