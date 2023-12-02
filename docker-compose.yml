@@ -1,0 +1,22 @@
+version: '3.7'
+
+networks:
+  zoo:
+    external: true
+
+services:
+  cache:
+    container_name: port-resolver-service-redis
+    image: redis:6.2-alpine
+    restart: always
+    command: redis-server --save 20 1 --loglevel warning --requirepass 5gthjjicCPr5wcliairk
+    volumes:
+      - cache:/data
+    networks:
+      - zoo
+
+
+
+volumes:
+  cache:
+    driver: local
