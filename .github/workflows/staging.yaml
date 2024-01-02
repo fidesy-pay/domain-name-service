@@ -53,9 +53,16 @@ jobs:
         run: |
           GOARCH=amd64 GOOS=linux go build -o ./bin/main ./cmd/${{ github.event.repository.name }}
 
-  deploy:
+  run-deps:
     runs-on: self-hosted
     needs: build
+    steps:
+      - name: Docker compose
+        run: docker compose up -d
+
+  deploy:
+    runs-on: self-hosted
+    needs: run-deps
     steps:
       - name: Build and run docker container
         run: |

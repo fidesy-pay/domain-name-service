@@ -15,6 +15,10 @@ generate:
 	mv pkg/${PROJECT_NAME}/github.com/${USER}/${PROJECT_NAME}/* pkg/${PROJECT_NAME}
 	rm -r pkg/${PROJECT_NAME}/github.com
 
+PHONY: clean
+clean:
+	 if docker inspect ${PROJECT_NAME} > /dev/null 2>&1; then docker rm -f ${PROJECT_NAME} && docker rmi -f ${PROJECT_NAME}; else echo "Container not found."; fi
+
 PHONY: go-build
 go-build:
 	GOOS=linux GOARCH=amd64 go build -o ./main ./cmd/${PROJECT_NAME}
@@ -28,4 +32,13 @@ build:
 
 PHONY: run
 run:
-	docker run --name ${PROJECT_NAME} -dp 7777:7777 -e GRPC_PORT=7777 ${PROJECT_NAME}
+	make clean
+
+	make build
+
+	docker run --name ${PROJECT_NAME} -d \
+			--network zoo \
+			-e APP_NAME=${PROJECT_NAME} \
+			-e ENV=PRODUCTION \
+			-e GRPC_PORT=10000 \
+			${PROJECT_NAME}

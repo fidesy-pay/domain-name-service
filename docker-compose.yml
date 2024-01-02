@@ -11,12 +11,10 @@ services:
     restart: always
     command: redis-server --save 20 1 --loglevel warning --requirepass 5gthjjicCPr5wcliairk
     volumes:
-      - cache:/data
+      - port-resolver-service-redis:/data
     networks:
       - zoo
 
 
-
 volumes:
-  cache:
-    driver: local
+  port-resolver-service-redis:
