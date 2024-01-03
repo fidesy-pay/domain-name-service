@@ -2,23 +2,24 @@ package app
 
 import (
 	"context"
-	desc "github.com/fidesy-pay/port-resolver-service/pkg/port-resolver-service"
+	desc "github.com/fidesy-pay/domain-name-service/pkg/domain-name-service"
 )
 
 type (
-	PortResolverService interface {
-		GetPort(ctx context.Context, serviceName string) (int64, error)
-		UpdatePort(ctx context.Context, serviceName string, port int64) error
+	Implementation struct {
+		desc.UnimplementedDomainNameServiceServer
+
+		domainNameService DomainNameService
+	}
+
+	DomainNameService interface {
+		GetAddress(ctx context.Context, serviceName string) (string, error)
+		UpdateAddress(ctx context.Context, serviceName string, address string) error
 	}
 )
-type Implementation struct {
-	desc.UnimplementedPortResolverServiceServer
 
-	portResolverService PortResolverService
-}
-
-func New(portResolverService PortResolverService) *Implementation {
+func New(domainNameService DomainNameService) *Implementation {
 	return &Implementation{
-		portResolverService: portResolverService,
+		domainNameService: domainNameService,
 	}
 }

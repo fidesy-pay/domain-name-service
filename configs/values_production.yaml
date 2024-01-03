@@ -1,2 +1,2 @@
-redis-host: port-resolver-service-redis:6379
+redis-host: domain-name-service-redis:6379
 redis-password: 5gthjjicCPr5wcliairk

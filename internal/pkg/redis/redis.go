@@ -2,11 +2,15 @@ package redis
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/fidesy-pay/port-resolver-service/internal/config"
+	"github.com/fidesy-pay/domain-name-service/internal/config"
 	"github.com/redis/go-redis/v9"
 	"time"
+)
+
+var (
+	ErrNotFound = errors.New("record with provided serviceName not found")
 )
 
 type Service struct {
@@ -31,13 +35,8 @@ func New(ctx context.Context) (*Service, error) {
 	return c, nil
 }
 
-func (s *Service) Set(ctx context.Context, key string, val interface{}, expiration time.Duration) error {
-	bytes, err := json.Marshal(val)
-	if err != nil {
-		return fmt.Errorf("json.Marshal: %w", err)
-	}
-
-	err = s.db.Set(ctx, key, bytes, expiration).Err()
+func (s *Service) Set(ctx context.Context, key string, bytes []byte, expiration time.Duration) error {
+	err := s.db.Set(ctx, key, bytes, expiration).Err()
 	if err != nil {
 		return fmt.Errorf("redis.Set: %w", err)
 	}
@@ -45,28 +44,23 @@ func (s *Service) Set(ctx context.Context, key string, val interface{}, expirati
 	return nil
 }
 
-func (s *Service) Get(ctx context.Context, key string, dst interface{}) (bool, error) {
+func (s *Service) Get(ctx context.Context, key string) ([]byte, error) {
 	result := s.db.Get(ctx, key)
 	if err := result.Err(); err != nil {
 		// not found
 		if result.Err() == redis.Nil {
-			return false, nil
+			return nil, ErrNotFound
 		}
 
-		return false, fmt.Errorf("redis.Get: %w", err)
+		return nil, fmt.Errorf("redis.Get: %w", err)
 	}
 
 	bytes, err := result.Bytes()
 	if err != nil {
-		return false, fmt.Errorf("result.Bytes: %w", err)
+		return nil, fmt.Errorf("result.Bytes: %w", err)
 	}
 
-	err = json.Unmarshal(bytes, &dst)
-	if err != nil {
-		return false, fmt.Errorf("json.Unmarshal: %w", err)
-	}
-
-	return true, nil
+	return bytes, nil
 }
 
 func (s *Service) Size(ctx context.Context) (int, error) {

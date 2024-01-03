@@ -1,1 +1,1 @@
-# port-resolver-service
+# domain-name-service

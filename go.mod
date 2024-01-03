@@ -1,4 +1,4 @@
-module github.com/fidesy-pay/port-resolver-service
+module github.com/fidesy-pay/domain-name-service
 
 go 1.21.1
 

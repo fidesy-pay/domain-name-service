@@ -1,6 +1,6 @@
 # Constants
 
-PROJECT_NAME=port-resolver-service
+PROJECT_NAME=domain-name-service
 USER=fidesy-pay
 
 
@@ -40,5 +40,5 @@ run:
 			--network zoo \
 			-e APP_NAME=${PROJECT_NAME} \
 			-e ENV=PRODUCTION \
-			-e GRPC_PORT=10000 \
+			-e GRPC_PORT=10000 -p 10000:10000 \
 			${PROJECT_NAME}

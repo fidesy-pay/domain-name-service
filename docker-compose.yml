@@ -6,15 +6,14 @@ networks:
 
 services:
   cache:
-    container_name: port-resolver-service-redis
+    container_name: domain-name-service-redis
     image: redis:6.2-alpine
     restart: always
     command: redis-server --save 20 1 --loglevel warning --requirepass 5gthjjicCPr5wcliairk
     volumes:
-      - port-resolver-service-redis:/data
+      - domain-name-service-redis:/data
     networks:
       - zoo
 
-
 volumes:
-  port-resolver-service-redis:
+  domain-name-service-redis:
