@@ -28,13 +28,6 @@ jobs:
           echo "APP_NAME=$APP_NAME" >> vars.env
           echo $APP_NAME
 
-      - name: Generate random number
-        run: |
-          GRPC_PORT=$((RANDOM % (65000 - 5000 + 1) + 5000))
-               
-          echo "GRPC_PORT=$GRPC_PORT" >> vars.env
-          echo "PROJECT_NAME=${{ github.event.repository.name }}" >> vars.env
-
   clean:
     runs-on: self-hosted
     needs: prepare
@@ -68,10 +61,14 @@ jobs:
         run: |
           source vars.env
           
+          GRPC_PORT=$((RANDOM % (65000 - 5000 + 1) + 5000))
+          PROXY_PORT=$((RANDOM % (65000 - 5000 + 1) + 5000))
+          
           docker build --tag $APP_NAME .
           docker run --name $APP_NAME -d \
             --network zoo \
             -e APP_NAME=$APP_NAME \
             -e ENV=STAGING \
             -e GRPC_PORT=$GRPC_PORT -p $GRPC_PORT:$GRPC_PORT \
+            -e PROXY_PORT=$PROXY_PORT -p $PROXY_PORT:$PROXY_PORT \
              $APP_NAME
